@@ -1,3 +1,4 @@
+import typing as ty
 from pathlib import Path
 from pydra import ShellCommandTask
 from pydra.engine.specs import ShellSpec, ShellOutSpec, File, Directory, SpecInfo
@@ -45,6 +46,11 @@ def dcm2niix_out_json(out_dir, filename, echo):
         echo_suffix = ""
 
     return Path(f"{out_dir}/{filename}{echo_suffix}.json").absolute()
+
+
+def dcm2niix_out_coils(out_dir, filename):
+
+    return [Path(f"{out_dir}/{filename}.nii.gz").absolute()]
 
 
 input_fields = [
@@ -378,6 +384,15 @@ output_fields = [
         {
             "help_string": "output dMRI b-bectors in FSL format",
             "output_file_template": "{out_dir}/{filename}.bvec",
+        },
+    ),
+    (
+        "out_coils",
+        ty.List[File],
+        {
+            "help_string": "output NIfTI images corresponding to each antenna",
+            "callable": dcm2niix_out_coils,
+            "mandatory": True,
         },
     ),
 ]
